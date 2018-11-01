@@ -48,7 +48,7 @@ public class EncodingTest extends HTTPBaseTest{
         String contentType = ContentType.JSON.withCharset(messageCharset);
         ResponseOptions response = RestAssured.given(spec)
                 .port(serverPort)
-                .contentType(ContentType.JSON.withCharset(StandardCharsets.UTF_8))
+                .contentType(ContentType.JSON.withCharset(messageCharset))
                 .body(request)
                 .post(MyRequestMapping.ENCODING_METHOD);
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
