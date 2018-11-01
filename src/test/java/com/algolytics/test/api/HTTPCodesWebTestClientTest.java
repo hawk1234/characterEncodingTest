@@ -28,11 +28,11 @@ public class HTTPCodesWebTestClientTest extends HTTPBaseTest{
 
         @Test
     public void testWebTestClientOk() throws Exception {
-        final MyResponse expectedResponse = new MyResponse();
+        final MyResponse expectedResponse = new MyResponse(PL_SMALL);
         webTestClient.post()
                     .uri(MyRequestMapping.ENCODING_METHOD)
                     .contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .syncBody(new MyRequest())
+                    .syncBody(new MyRequest(PL_SMALL))
                     .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -47,7 +47,7 @@ public class HTTPCodesWebTestClientTest extends HTTPBaseTest{
         webTestClient.post()
                 .uri(MyRequestMapping.ERROR_METHOD)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .syncBody(new MyRequest())
+                .syncBody(new MyRequest(PL_SMALL))
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -59,7 +59,7 @@ public class HTTPCodesWebTestClientTest extends HTTPBaseTest{
         webTestClient.post()
                     .uri(MyRequestMapping.ENCODING_METHOD)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .syncBody(new MyRequest())
+                    .syncBody(new MyRequest(PL_SMALL))
                     .exchange()
                 .expectStatus().isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)

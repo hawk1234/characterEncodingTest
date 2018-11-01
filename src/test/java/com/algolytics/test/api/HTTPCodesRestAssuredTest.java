@@ -34,11 +34,11 @@ public class HTTPCodesRestAssuredTest extends HTTPBaseTest{
 
     @Test
     public void testRestAssuredOk() throws Exception {
-        MyResponse myResponse = new MyResponse();
+        MyResponse myResponse = new MyResponse(PL_SMALL);
         ResponseOptions response = RestAssured.given(spec)
                 .port(serverPort)
                 .contentType(ContentType.JSON.withCharset(StandardCharsets.UTF_8))
-                .body(new MyRequest())
+                .body(new MyRequest(PL_SMALL))
                 .post(MyRequestMapping.ENCODING_METHOD);
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         Assert.assertTrue(response.getContentType().equals(MediaType.APPLICATION_JSON_UTF8_VALUE));
@@ -51,7 +51,7 @@ public class HTTPCodesRestAssuredTest extends HTTPBaseTest{
         ResponseOptions response = RestAssured.given(spec)
                 .port(serverPort)
                 .contentType(ContentType.JSON.withCharset(StandardCharsets.UTF_8))
-                .body(json(new MyRequest()))
+                .body(json(new MyRequest(PL_SMALL)))
                 .post(MyRequestMapping.ERROR_METHOD);
         Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
         Assert.assertTrue(response.getContentType().equals(MediaType.APPLICATION_JSON_UTF8_VALUE));
@@ -64,7 +64,7 @@ public class HTTPCodesRestAssuredTest extends HTTPBaseTest{
         ResponseOptions response = RestAssured.given(spec)
                 .port(serverPort)
                 .contentType(ContentType.TEXT.withCharset(StandardCharsets.UTF_8))
-                .body(json(new MyRequest()))
+                .body(json(new MyRequest(PL_SMALL)))
                 .post(MyRequestMapping.ENCODING_METHOD);
         Assert.assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), response.getStatusCode());
         Assert.assertTrue(response.getContentType().equals(MediaType.APPLICATION_JSON_UTF8_VALUE));

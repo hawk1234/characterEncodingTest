@@ -23,8 +23,8 @@ public class HTTPCodesMockMvcTest extends HTTPBaseTest{
 
     @Test
     public void testMockMvcOk() throws Exception {
-        MyRequest request = new MyRequest();
-        MyResponse response = new MyResponse();
+        MyRequest request = new MyRequest(PL_SMALL);
+        MyResponse response = new MyResponse(PL_SMALL);
         mockMvc.perform(MockMvcRequestBuilders.post(MyRequestMapping.ENCODING_METHOD)
                 .content(json(request))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
@@ -37,7 +37,7 @@ public class HTTPCodesMockMvcTest extends HTTPBaseTest{
 
     @Test
     public void testMockMvcError() throws Exception {
-        MyRequest request = new MyRequest();
+        MyRequest request = new MyRequest(PL_SMALL);
         mockMvc.perform(MockMvcRequestBuilders.post(MyRequestMapping.ERROR_METHOD)
                 .content(json(request))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
@@ -48,7 +48,7 @@ public class HTTPCodesMockMvcTest extends HTTPBaseTest{
 
     @Test
     public void testMockMvcFailsOnUnsupportedMediaType() throws Exception {
-        MyRequest request = new MyRequest();
+        MyRequest request = new MyRequest(PL_SMALL);
         mockMvc.perform(MockMvcRequestBuilders.post(MyRequestMapping.ENCODING_METHOD)
                 .content(json(request))
                 .contentType(MediaType.TEXT_PLAIN))

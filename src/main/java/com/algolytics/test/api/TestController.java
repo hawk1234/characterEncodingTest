@@ -10,7 +10,7 @@ public class TestController {
     public MyResponse encoding(@RequestBody MyRequest request){
         String field = request.getField();
         System.out.println(field);
-        return new MyResponse();
+        return new MyResponse(request.getField());
     }
 
     @RequestMapping(method = RequestMethod.POST, value = MyRequestMapping.ERROR_METHOD)
