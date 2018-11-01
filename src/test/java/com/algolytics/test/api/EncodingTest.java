@@ -22,6 +22,8 @@ import java.nio.charset.StandardCharsets;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class EncodingTest extends HTTPBaseTest{
 
+    private static final String TESTED_ENDPOINT = MyRequestMapping.MY_ENCODING_HANDLING_METHOD;
+
     @LocalServerPort
     int serverPort;
 
@@ -50,7 +52,7 @@ public class EncodingTest extends HTTPBaseTest{
                 .port(serverPort)
                 .contentType(ContentType.JSON.withCharset(messageCharset))
                 .body(request)
-                .post(MyRequestMapping.ENCODING_METHOD);
+                .post(TESTED_ENDPOINT);
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         Assert.assertTrue(ContentType.fromContentType(response.getContentType()).equals(ContentType.fromContentType(contentType)));
         MyResponse myResponse = object(new String(response.getBody().asByteArray(), messageCharset), MyResponse.class);
