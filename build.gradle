@@ -26,6 +26,7 @@ repositories {
 dependencies {
     //spring boot
     compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+    compile("org.springframework.boot:spring-boot-starter-aop:$springBootVersion")
 
     compile("io.rest-assured:rest-assured:$restAssuredVersion")
     compile("com.google.guava:guava:$guavaVersion")

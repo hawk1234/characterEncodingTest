@@ -22,8 +22,6 @@ import java.nio.charset.StandardCharsets;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class EncodingTest extends HTTPBaseTest{
 
-    private static final String TESTED_ENDPOINT = MyRequestMapping.MY_ENCODING_HANDLING_METHOD;
-
     @LocalServerPort
     int serverPort;
 
@@ -41,7 +39,7 @@ public class EncodingTest extends HTTPBaseTest{
         Assert.assertEquals(polishCharacters, result);
     }
 
-    private void performEncodingTest(Charset messageCharset) throws Exception {
+    private void performEncodingSupportedTest(Charset messageCharset, String endpoint) throws Exception {
         simpleTestToCheckIfJavaHandlesGivenCharactersInGivenEncoding(messageCharset);
 
         byte[] request = json(new MyRequest(PL_SMALL)).getBytes(messageCharset);
@@ -50,9 +48,9 @@ public class EncodingTest extends HTTPBaseTest{
         String contentType = ContentType.JSON.withCharset(messageCharset);
         ResponseOptions response = RestAssured.given(spec)
                 .port(serverPort)
-                .contentType(ContentType.JSON.withCharset(messageCharset))
+                .contentType(contentType)
                 .body(request)
-                .post(TESTED_ENDPOINT);
+                .post(endpoint);
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         Assert.assertTrue(ContentType.fromContentType(response.getContentType()).equals(ContentType.fromContentType(contentType)));
         MyResponse myResponse = object(new String(response.getBody().asByteArray(), messageCharset), MyResponse.class);
@@ -60,38 +58,87 @@ public class EncodingTest extends HTTPBaseTest{
         Assert.assertEquals(expectedResponse.getFieldEn(), myResponse.getFieldEn());
     }
 
-    @Test
-    public void testUTF_8() throws Exception {
-        performEncodingTest(StandardCharsets.UTF_8);
+    private void performEncodingNotSupportedTest(Charset messageCharset, String endpoint) throws Exception {
+        byte[] request = json(new MyRequest(PL_SMALL)).getBytes(messageCharset);
+
+        String contentType = ContentType.JSON.withCharset(messageCharset);
+        ResponseOptions response = RestAssured.given(spec)
+                .port(serverPort)
+                .contentType(contentType)
+                .body(request)
+                .post(endpoint);
+        Assert.assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), response.getStatusCode());
+        Assert.assertTrue(ContentType.fromContentType(response.getContentType()).equals(
+                ContentType.fromContentType(ContentType.JSON.withCharset(StandardCharsets.UTF_8))));
     }
 
     @Test
-    public void testUTF_16() throws Exception {
-        performEncodingTest(StandardCharsets.UTF_16);
+    public void testMyHandlingUTF_8() throws Exception {
+        performEncodingSupportedTest(StandardCharsets.UTF_8, MyRequestMapping.MY_ENCODING_HANDLING_METHOD);
     }
 
     @Test
-    public void testUTF_16BE() throws Exception {
-        performEncodingTest(StandardCharsets.UTF_16BE);
+    public void testMyHandlingUTF_16() throws Exception {
+        performEncodingSupportedTest(StandardCharsets.UTF_16, MyRequestMapping.MY_ENCODING_HANDLING_METHOD);
     }
 
     @Test
-    public void testUTF_16LE() throws Exception {
-        performEncodingTest(StandardCharsets.UTF_16LE);
+    public void testMyHandlingUTF_16BE() throws Exception {
+        performEncodingSupportedTest(StandardCharsets.UTF_16BE, MyRequestMapping.MY_ENCODING_HANDLING_METHOD);
     }
 
     @Test
-    public void testWindows_1250() throws Exception {
-        performEncodingTest(Charset.forName("windows-1250"));
+    public void testMyHandlingUTF_16LE() throws Exception {
+        performEncodingSupportedTest(StandardCharsets.UTF_16LE, MyRequestMapping.MY_ENCODING_HANDLING_METHOD);
     }
 
     @Test
-    public void testISO_8859_2() throws Exception {
-        performEncodingTest(Charset.forName("ISO_8859-2"));
+    public void testMyHandlingWindows_1250() throws Exception {
+        performEncodingSupportedTest(Charset.forName("windows-1250"), MyRequestMapping.MY_ENCODING_HANDLING_METHOD);
     }
 
     @Test
-    public void testISO_8859_13() throws Exception {
-        performEncodingTest(Charset.forName("ISO_8859-13"));
+    public void testMyHandlingISO_8859_2() throws Exception {
+        performEncodingSupportedTest(Charset.forName("ISO_8859-2"), MyRequestMapping.MY_ENCODING_HANDLING_METHOD);
+    }
+
+    @Test
+    public void testMyHandlingISO_8859_13() throws Exception {
+        performEncodingSupportedTest(Charset.forName("ISO_8859-13"), MyRequestMapping.MY_ENCODING_HANDLING_METHOD);
+    }
+
+    @Test
+    public void testDefaultHandlingUTF_8() throws Exception {
+        performEncodingSupportedTest(StandardCharsets.UTF_8, MyRequestMapping.ENCODING_METHOD);
+    }
+
+    @Test
+    public void testDefaultHandlingUTF_16() throws Exception {
+        performEncodingNotSupportedTest(StandardCharsets.UTF_16, MyRequestMapping.ENCODING_METHOD);
+    }
+
+    @Test
+    public void testDefaultHandlingUTF_16BE() throws Exception {
+        performEncodingNotSupportedTest(StandardCharsets.UTF_16BE, MyRequestMapping.ENCODING_METHOD);
+    }
+
+    @Test
+    public void testDefaultHandlingUTF_16LE() throws Exception {
+        performEncodingNotSupportedTest(StandardCharsets.UTF_16LE, MyRequestMapping.ENCODING_METHOD);
+    }
+
+    @Test
+    public void testDefaultHandlingWindows_1250() throws Exception {
+        performEncodingNotSupportedTest(Charset.forName("windows-1250"), MyRequestMapping.ENCODING_METHOD);
+    }
+
+    @Test
+    public void testDefaultHandlingISO_8859_2() throws Exception {
+        performEncodingNotSupportedTest(Charset.forName("ISO_8859-2"), MyRequestMapping.ENCODING_METHOD);
+    }
+
+    @Test
+    public void testDefaultHandlingISO_8859_13() throws Exception {
+        performEncodingNotSupportedTest(Charset.forName("ISO_8859-13"), MyRequestMapping.ENCODING_METHOD);
     }
 }

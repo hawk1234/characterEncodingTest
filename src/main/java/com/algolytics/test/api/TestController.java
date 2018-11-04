@@ -17,8 +17,12 @@ import java.nio.charset.StandardCharsets;
 @RestController
 public class TestController {
 
-    @RequestMapping(method = RequestMethod.POST, value = MyRequestMapping.ENCODING_METHOD)
-    public MyResponse encoding(@RequestBody MyRequest request){
+    @ValidateContentTypeAspect.ValidateContentType
+    @RequestMapping(method = RequestMethod.POST, value = MyRequestMapping.ENCODING_METHOD,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public MyResponse encoding(@RequestBody MyRequest request, @RequestHeader HttpHeaders headers){
         String field = request.getField();
         System.out.println(field);
         return new MyResponse(request.getField());
@@ -49,7 +53,7 @@ public class TestController {
 
             //do intended business logic
             MyRequest myRequest = new ObjectMapper().readValue(message, MyRequest.class);
-            MyResponse myResponse = encoding(myRequest);
+            MyResponse myResponse = encoding(myRequest, headers);
 
             //write response
             String responseMessage = new ObjectMapper().writeValueAsString(myResponse);
